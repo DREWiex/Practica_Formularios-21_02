@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/main.css">
+    <title>Práctica Formularios</title>
+</head>
+<body>
+    <header class="grid-container">
+        <div class="grid-item">
+        <h1>Formulario</h1>
+        </div>
+    </header>
+
+    <main>
+
+        <section class="grid-container">
+            <form action="" method="" id="form" name="form">
+
+                <div class="grid-item">
+                <input type="text" id="title" name="title" class="item" placeholder="Elige el título">
+                </div>
+
+                <div class="grid-item">
+                <input type="text" id="director" name="director" class="item" placeholder="Elige el director">
+                </div>
+
+                <div class="grid-item">
+                <input type="text" id="year" name="year" class="item" placeholder="Elige el año">
+                </div>
+
+                <div class="grid-item">
+                <select name="genre" id="genre" class="item">
+
+                </select>
+                </div>
+
+                <div class="grid-item">
+                    <input type="submit" id="boton-submit" class="padding" value="Enviar información">
+                </div>
+
+            </form>
+        </section>
+
+        <section class="grid-container">
+            <table class="grid-item border">
+                <thead>
+                    <tr>
+                        <th>Título</th>
+                        <th>Director</th>
+                        <th>Año</th>
+                        <th>Género</th>
+                    </tr>
+                </thead>
+
+                <tbody id="tablita">
+                
+                </tbody>
+
+            </table>
+        </section>
+
+    </main>
+
+    <script src="js/main.js"></script>
+    
+</body>
+</html>
