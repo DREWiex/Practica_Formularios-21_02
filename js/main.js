@@ -13,7 +13,6 @@ const fragment = document.createDocumentFragment();
 
 //* Capturas *//
 const captureForm = document.querySelector('#form');
-//const captureSubmit = document.querySelector('#boton-submit');
 const captureTable = document.querySelector('#tablita');
 const capInputTitle = document.querySelector('#title');
 const capInputDirector = document.querySelector('#director');
@@ -25,7 +24,7 @@ const arrayGenres = ['Elige un género','Terror', 'Acción', 'Comedia', 'Románt
 
 const arrayMovies = []; //* los datos que voy a pintar en la tabla
 
-const objValidarMovies = { //* (también podría hacerlo con un array vacío)
+const objValidarMovies = { //* (también podría hacerlo con un array vacío(?)
     title: false,
     director: false,
     year: false,
@@ -35,10 +34,10 @@ const objValidarMovies = { //* (también podría hacerlo con un array vacío)
 
 //*** EVENTOS ***//
 
-captureForm.addEventListener('submit', (ev) => { //* anulo (temporalmente(?) el atributo action del form
+captureForm.addEventListener('submit', (ev) => {
 
-    ev.preventDefault();
-    validarDatos();
+    ev.preventDefault(); //* anulo (temporalmente(?) la acción el atributo action del form // ¿cómo lo reactivo después?
+    validarDatos(); //* "desbloquea" la acción del submit y realiza la acción de la función (validarDatos() + pintarTabla())
 
 })//!EV-SUBMIT
 
@@ -65,10 +64,14 @@ const validarDatos = () => {
 
     let errores = '';
 
+    //*** Capturas de los values ***//
     const title = capInputTitle.value;
     const director = capInputDirector.value;
     const year = capInputYear.value;
     const genre = capInputGenre.value;
+
+    //*** Expresiones reguladas ***//
+    
 
     if(isNaN(title) && title.trim().length > 0){
         objValidarMovies.title = true;
@@ -112,6 +115,8 @@ const validarDatos = () => {
         alert(errores);
     }
 
+    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar)
+
 }//!FUNC-VALIDARDATOS
 
 
@@ -122,7 +127,10 @@ const almacenarDatos = () => { //! (por hacer)
 }//!FUNC-ALMACENARDATOS
 
 
-const pintarTabla = () => { //! no hace nada porque no le está llegando nada del arrayMovies (dentro de la función de validación sí recibe el push)
+const pintarTabla = () => {
+
+    captureTable.innerHTML = ""; //* al comenzar está vacía, lo lleno (func validar + func pintar) y lo vuelvo a vaciar antes de que vuelva a pintar
+    //? utilizo innerHTML para que limpie tanto las etiquetas como el texto?
 
     arrayMovies.forEach((item) => {
         const tableRow = document.createElement('TR');
@@ -149,8 +157,6 @@ const pintarTabla = () => { //! no hace nada porque no le está llegando nada de
 const init = () => {
 
     pintarSelect();
-    almacenarDatos();
-    pintarTabla();
 
 }//!FUNC-INIT
 
