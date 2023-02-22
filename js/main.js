@@ -71,7 +71,7 @@ const validarDatos = () => {
     const genre = capInputGenre.value;
 
     //*** Expresiones reguladas ***//
-    
+   const regExp = {};
 
     if(isNaN(title) && title.trim().length > 0){
         objValidarMovies.title = true;
@@ -101,18 +101,19 @@ const validarDatos = () => {
         errores += 'Error en género. ';
     }
 
-    const arrayValidar = Object.values(objValidarMovies); //? investigar
+    const arrayValidar = Object.values(objValidarMovies); //* me devuelve un array con el resultado (boolean) de la validación de cada propiedad del objeto (objValidarMovies)
 
-    let validar = arrayValidar.findIndex((item) => item == false); //? investigar
-    if(validar === -1){
+    let validar = arrayValidar.findIndex((item) => item == false); //* si se cumple la condición, me va a devolver el index del primer elemento "false"
+
+    if(validar === -1){ //* si me devuelve -1, es que la condición no se cumple, por lo que todos son "true" y puedo proceder a pintar
         arrayMovies.push({
-            title: title,
-            director: director,
-            year: year,
-            genre: genre,
+            title,
+            director,
+            year,
+            genre,
         })
     }else{
-        alert(errores);
+        alert(errores); //! mejorar el mensaje de error
     }
 
     pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar)
