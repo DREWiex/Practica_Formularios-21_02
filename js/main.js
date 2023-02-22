@@ -25,7 +25,7 @@ const arrayGenres = ['Elige un género','Terror', 'Acción', 'Comedia', 'Románt
 
 const arrayMovies = []; //* los datos que voy a pintar en la tabla
 
-const objValidarMovies = { //* (también podría hacerlo con un array vacío(?)
+const objValidarMovies = { //? (también podría hacerlo con un array vacío(?)
     title: false,
     director: false,
     year: false,
@@ -65,7 +65,7 @@ const validarDatos = () => {
 
     let errores = '';
 
-    const fecha = new Date();
+    const fecha = new Date(); //* constante para poder validar 'year' incluyendo el año actual (.getFullYear())
 
     //*** Capturas de los values ***//
     const title = capInputTitle.value;
@@ -79,7 +79,6 @@ const validarDatos = () => {
     regExpDirector: /^([a-zÁ-ÿ\-]\s*)+$/gi,
     regExpYear: /^[0-9]{4}$/g
    };
-   console.log(regExpYear);
 
     if(regExp.regExpTitle.test(title)){
         objValidarMovies.title = true;
@@ -95,11 +94,11 @@ const validarDatos = () => {
         errores += 'Error en director. ';
     }
 
-    if(isNaN(year) || year == ""){
+    if(regExp.regExpYear.test(year) && (year >= 1800 && year <= fecha.getFullYear())){
+        objValidarMovies.year = true;
+    }else{
         objValidarMovies.year = false;
         errores += 'Error en año. ';
-    }else if(year > 1800 && year <= 2023){
-        objValidarMovies.year = true;
     }
 
     if(genre != 'Elige un género'){
@@ -124,14 +123,14 @@ const validarDatos = () => {
         alert(errores); //! mejorar el mensaje de error
     }
 
-    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar)
+    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar la tabla con las propiedas del objeto almacenado en el array)
 
 }//!FUNC-VALIDARDATOS
 
 
 const almacenarDatos = () => { //! (por hacer)
 
-
+    
 
 }//!FUNC-ALMACENARDATOS
 
