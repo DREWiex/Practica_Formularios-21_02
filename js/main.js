@@ -1,6 +1,7 @@
 //*TODO: Práctica
 //* 1) Crear una array Película con los atributos Título, Director, Año y Género
-//* 2) Solicita los datos a través de un formulario. Validar los campos: "Año" que tenga 4 cifras y se encuentre entre el año 1.800 y la fecha actual, y los géneros serán terror, acción, comedia,romántica.
+//* 2) Solicita los datos a través de un formulario. Validar los campos: "Año" que tenga 4 cifras y se encuentre entre el
+//*     año 1.800 y la fecha actual, y los géneros serán terror, acción, comedia,romántica.
 //* 3) Almacenar las películas en un array.
 //* 4) Mostrar todas las películas en una tabla.
 
@@ -64,6 +65,8 @@ const validarDatos = () => {
 
     let errores = '';
 
+    const fecha = new Date();
+
     //*** Capturas de los values ***//
     const title = capInputTitle.value;
     const director = capInputDirector.value;
@@ -71,16 +74,21 @@ const validarDatos = () => {
     const genre = capInputGenre.value;
 
     //*** Expresiones reguladas ***//
-   const regExp = {};
+   const regExp = {
+    regExpTitle: /([a-z0-9Á-ÿ\-]\s*)+/gi,
+    regExpDirector: /^([a-zÁ-ÿ\-]\s*)+$/gi,
+    regExpYear: /^[0-9]{4}$/g
+   };
+   console.log(regExpYear);
 
-    if(isNaN(title) && title.trim().length > 0){
+    if(regExp.regExpTitle.test(title)){
         objValidarMovies.title = true;
     }else{
         objValidarMovies.title = false;
         errores += 'Error en título. ';
     }
 
-    if(isNaN(director) && title.trim().length > 0){
+    if(regExp.regExpDirector.test(director)){
         objValidarMovies.director = true;
     }else{
         objValidarMovies.director = false;
