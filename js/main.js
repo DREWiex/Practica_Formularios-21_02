@@ -1,6 +1,7 @@
 //*TODO: Práctica
 //* 1) Crear una array Película con los atributos Título, Director, Año y Género
-//* 2) Solicita los datos a través de un formulario. Validar los campos: "Año" que tenga 4 cifras y se encuentre entre el año 1.800 y la fecha actual, y los géneros serán terror, acción, comedia,romántica.
+//* 2) Solicita los datos a través de un formulario. Validar los campos: "Año" que tenga 4 cifras y se encuentre entre el
+//*     año 1.800 y la fecha actual, y los géneros serán terror, acción, comedia,romántica.
 //* 3) Almacenar las películas en un array.
 //* 4) Mostrar todas las películas en una tabla.
 
@@ -13,7 +14,8 @@ const fragment = document.createDocumentFragment();
 
 //* Capturas *//
 const captureForm = document.querySelector('#form');
-const captureTable = document.querySelector('#tablita');
+const captureTable = document.querySelector('#tabla');
+
 const capInputTitle = document.querySelector('#title');
 const capInputDirector = document.querySelector('#director');
 const capInputYear = document.querySelector('#year');
@@ -22,9 +24,9 @@ const capInputGenre = document.querySelector('#genre');
 //* Arrays */
 const arrayGenres = ['Elige un género','Terror', 'Acción', 'Comedia', 'Romántica'];
 
-const arrayMovies = []; //* los datos que voy a pintar en la tabla
+const arrayMovies = JSON.parse(localStorage.getItem('movies')) || []; //* tomo los datos del localStorage, y si no hay, un array vacío
 
-const objValidarMovies = { //* (también podría hacerlo con un array vacío(?)
+const objValidarMovies = { //? (también podría hacerlo con un array vacío(?)
     title: false,
     director: false,
     year: false,
@@ -36,8 +38,10 @@ const objValidarMovies = { //* (también podría hacerlo con un array vacío(?)
 
 captureForm.addEventListener('submit', (ev) => {
 
-    ev.preventDefault(); //* anulo (temporalmente(?) la acción el atributo action del form // ¿cómo lo reactivo después?
-    validarDatos(); //* "desbloquea" la acción del submit y realiza la acción de la función (validarDatos() + pintarTabla())
+    ev.preventDefault(); //* anulo (temporalmente(?) la acción el atributo action del form
+    validarDatos(); //* "desbloquea" la acción del submit y realiza la acción de la función
+    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar la tabla con las propiedas del objeto almacenado en el array)
+    captureForm.reset(); //* borra los datos de los campos del formulario una vez enviado
 
 })//!EV-SUBMIT
 
@@ -64,6 +68,8 @@ const validarDatos = () => {
 
     let errores = '';
 
+    const fecha = new Date(); //* constante para poder validar 'year' incluyendo el año actual (.getFullYear())
+
     //*** Capturas de los values ***//
     const title = capInputTitle.value;
     const director = capInputDirector.value;
@@ -71,27 +77,31 @@ const validarDatos = () => {
     const genre = capInputGenre.value;
 
     //*** Expresiones reguladas ***//
-   const regExp = {};
+   const regExp = {
+    regExpTitle: /([a-z0-9Á-ÿ\-]\s*)+/i,
+    regExpDirector: /^([a-zÁ-ÿ\-]\s*)+$/i,
+    regExpYear: /^[0-9]{4}$/
+   };
 
-    if(isNaN(title) && title.trim().length > 0){
+    if(regExp.regExpTitle.test(title)){
         objValidarMovies.title = true;
     }else{
         objValidarMovies.title = false;
         errores += 'Error en título. ';
     }
 
-    if(isNaN(director) && title.trim().length > 0){
+    if(regExp.regExpDirector.test(director)){
         objValidarMovies.director = true;
     }else{
         objValidarMovies.director = false;
         errores += 'Error en director. ';
     }
 
-    if(isNaN(year) || year == ""){
+    if(regExp.regExpYear.test(year) && (year >= 1800 && year <= fecha.getFullYear())){
+        objValidarMovies.year = true;
+    }else{
         objValidarMovies.year = false;
         errores += 'Error en año. ';
-    }else if(year > 1800 && year <= 2023){
-        objValidarMovies.year = true;
     }
 
     if(genre != 'Elige un género'){
@@ -106,24 +116,26 @@ const validarDatos = () => {
     let validar = arrayValidar.findIndex((item) => item == false); //* si se cumple la condición, me va a devolver el index del primer elemento "false"
 
     if(validar === -1){ //* si me devuelve -1, es que la condición no se cumple, por lo que todos son "true" y puedo proceder a pintar
-        arrayMovies.push({
+        const newMovie = {
             title,
             director,
             year,
             genre,
-        })
+        }
+        almacenarDatos(newMovie);
     }else{
         alert(errores); //! mejorar el mensaje de error
     }
 
-    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar)
+    
 
 }//!FUNC-VALIDARDATOS
 
 
-const almacenarDatos = () => { //! (por hacer)
-
-
+const almacenarDatos = (newMovie) => {
+    
+    arrayMovies.push(newMovie)
+    setLocal()
 
 }//!FUNC-ALMACENARDATOS
 
@@ -131,9 +143,11 @@ const almacenarDatos = () => { //! (por hacer)
 const pintarTabla = () => {
 
     captureTable.innerHTML = ""; //* al comenzar está vacía, lo lleno (func validar + func pintar) y lo vuelvo a vaciar antes de que vuelva a pintar
-    //? utilizo innerHTML para que limpie tanto las etiquetas como el texto?
+    //? utilizo innerHTML para que limpie tanto las etiquetas como el texto
 
-    arrayMovies.forEach((item) => {
+    const films = getLocal();
+
+    films.forEach((item) => {
         const tableRow = document.createElement('TR');
         const titleTD = document.createElement('TD');
         titleTD.textContent = item.title;
@@ -155,9 +169,24 @@ const pintarTabla = () => {
 }//!FUNC-PINTARTABLA
 
 
+const setLocal = () => {
+
+localStorage.setItem("movies", JSON.stringify(arrayMovies));
+
+}//!FUNC-SETLOCAL
+
+
+const getLocal = () => {
+
+    return JSON.parse(localStorage.getItem('movies')) || [];
+
+}//!FUNC-GETLOCAL
+
+
 const init = () => {
 
     pintarSelect();
+    pintarTabla();
 
 }//!FUNC-INIT
 
