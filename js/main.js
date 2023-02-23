@@ -14,7 +14,8 @@ const fragment = document.createDocumentFragment();
 
 //* Capturas *//
 const captureForm = document.querySelector('#form');
-const captureTable = document.querySelector('#tablita');
+const captureTable = document.querySelector('#tabla');
+
 const capInputTitle = document.querySelector('#title');
 const capInputDirector = document.querySelector('#director');
 const capInputYear = document.querySelector('#year');
@@ -23,7 +24,7 @@ const capInputGenre = document.querySelector('#genre');
 //* Arrays */
 const arrayGenres = ['Elige un género','Terror', 'Acción', 'Comedia', 'Romántica'];
 
-const arrayMovies = []; //* los datos que voy a pintar en la tabla
+const arrayMovies = JSON.parse(localStorage.getItem('movies')) || []; //* tomo los datos del localStorage, y si no hay, un array vacío
 
 const objValidarMovies = { //? (también podría hacerlo con un array vacío(?)
     title: false,
@@ -37,8 +38,10 @@ const objValidarMovies = { //? (también podría hacerlo con un array vacío(?)
 
 captureForm.addEventListener('submit', (ev) => {
 
-    ev.preventDefault(); //* anulo (temporalmente(?) la acción el atributo action del form // ¿cómo lo reactivo después?
-    validarDatos(); //* "desbloquea" la acción del submit y realiza la acción de la función (validarDatos() + pintarTabla())
+    ev.preventDefault(); //* anulo (temporalmente(?) la acción el atributo action del form
+    validarDatos(); //* "desbloquea" la acción del submit y realiza la acción de la función
+    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar la tabla con las propiedas del objeto almacenado en el array)
+    captureForm.reset(); //* borra los datos de los campos del formulario una vez enviado
 
 })//!EV-SUBMIT
 
@@ -75,9 +78,9 @@ const validarDatos = () => {
 
     //*** Expresiones reguladas ***//
    const regExp = {
-    regExpTitle: /([a-z0-9Á-ÿ\-]\s*)+/gi,
-    regExpDirector: /^([a-zÁ-ÿ\-]\s*)+$/gi,
-    regExpYear: /^[0-9]{4}$/g
+    regExpTitle: /([a-z0-9Á-ÿ\-]\s*)+/i,
+    regExpDirector: /^([a-zÁ-ÿ\-]\s*)+$/i,
+    regExpYear: /^[0-9]{4}$/
    };
 
     if(regExp.regExpTitle.test(title)){
@@ -113,24 +116,26 @@ const validarDatos = () => {
     let validar = arrayValidar.findIndex((item) => item == false); //* si se cumple la condición, me va a devolver el index del primer elemento "false"
 
     if(validar === -1){ //* si me devuelve -1, es que la condición no se cumple, por lo que todos son "true" y puedo proceder a pintar
-        arrayMovies.push({
+        const newMovie = {
             title,
             director,
             year,
             genre,
-        })
+        }
+        almacenarDatos(newMovie);
     }else{
         alert(errores); //! mejorar el mensaje de error
     }
 
-    pintarTabla(); //* una vez validados los datos, llamo a la función que quiero que haga la siguiente acción (pintar la tabla con las propiedas del objeto almacenado en el array)
+    
 
 }//!FUNC-VALIDARDATOS
 
 
-const almacenarDatos = () => { //! (por hacer)
-
+const almacenarDatos = (newMovie) => {
     
+    arrayMovies.push(newMovie)
+    setLocal()
 
 }//!FUNC-ALMACENARDATOS
 
@@ -138,9 +143,11 @@ const almacenarDatos = () => { //! (por hacer)
 const pintarTabla = () => {
 
     captureTable.innerHTML = ""; //* al comenzar está vacía, lo lleno (func validar + func pintar) y lo vuelvo a vaciar antes de que vuelva a pintar
-    //? utilizo innerHTML para que limpie tanto las etiquetas como el texto?
+    //? utilizo innerHTML para que limpie tanto las etiquetas como el texto
 
-    arrayMovies.forEach((item) => {
+    const films = getLocal();
+
+    films.forEach((item) => {
         const tableRow = document.createElement('TR');
         const titleTD = document.createElement('TD');
         titleTD.textContent = item.title;
@@ -162,9 +169,24 @@ const pintarTabla = () => {
 }//!FUNC-PINTARTABLA
 
 
+const setLocal = () => {
+
+localStorage.setItem("movies", JSON.stringify(arrayMovies));
+
+}//!FUNC-SETLOCAL
+
+
+const getLocal = () => {
+
+    return JSON.parse(localStorage.getItem('movies')) || [];
+
+}//!FUNC-GETLOCAL
+
+
 const init = () => {
 
     pintarSelect();
+    pintarTabla();
 
 }//!FUNC-INIT
 
